@@ -76,7 +76,7 @@ def get_analysis_from_triage(i, filename):
 
     # Process the report in order to extract Emotet configuration from it
     if not data.get("extracted", None):
-        print "[!] Triage analysis {0} doesn't have a Emotet config".format(i)
+        print( "[!] Triage analysis {0} doesn't have a Emotet config".format(i))
         return ""
 
     # Get configuration from dump
@@ -90,13 +90,13 @@ def get_analysis_from_triage(i, filename):
 
     # Check if gotten config is a emotet config
     if config == None:
-        print "[!] Emotet configuration not found on Triage {0} analysis".format(i)
+        print( "[!] Emotet configuration not found on Triage {0} analysis".format(i))
         return ""
     if not config.get("family", None):
-        print "[!] Emotet configuration not found on Triage {0} analysis".format(i)
+        print( "[!] Emotet configuration not found on Triage {0} analysis".format(i))
         return ""
     if config["family"] != "emotet":
-        print "[!] Emotet configuration not found on Triage {0} analysis".format(i)
+        print( "[!] Emotet configuration not found on Triage {0} analysis".format(i))
         return ""
 
     _, filename = tempfile.mkstemp()
