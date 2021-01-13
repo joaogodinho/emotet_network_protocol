@@ -31,7 +31,7 @@ class EmotetEmulator():
     AES_KEY = None
 
 
-    def __init__(self, keyfilename, ipsfilename, cape=None, triage=None, hostname=None, useragent=None):
+    def __init__(self, keyfilename=None, ipsfilename=None, cape=None, triage=None, hostname=None, useragent=None):
         if cape:
             self.import_pbk_and_cncs_from_cape(cape)
         elif triage:
@@ -130,7 +130,7 @@ class EmotetEmulator():
         return bot_info.SerializeToString()
 
     def _get_random_aes_key(self):
-        return ''.join([ chr(random.getrandbits(8)) for i in xrange(0x10)])
+        return os.urandom(0x10)
 #
 # Pyload generation
 #
@@ -190,17 +190,12 @@ class EmotetEmulator():
     # https://doom99.net/index.php?/archives/13-Gemalto-IDPrime-OBKG,-MS_PUBLICKEYBLOB-and-SSH.html
     def import_public_key(self, filename):
         with open(filename, "rb") as f:
-            b64enc_key = f.read()
-
-        b64dec_key = base64.b64decode(b64enc_key)
-        seq = asn1.DerSequence()
-        seq.decode(b64dec_key)
-        pubkey = RSA.construct((seq[0], seq[1]))
-        pubkey = PKCS1_OAEP.new(pubkey)
-        self.RSA_PUBLIC_KEY = pubkey
+            pubkey = RSA.import_key(f.read())
+            pubkey = PKCS1_OAEP.new(pubkey)
+            self.RSA_PUBLIC_KEY = pubkey
 
     def import_cncs(self, filename):
-        with open(filename, "rb") as f:
+        with open(filename, "r") as f:
             ips = f.readlines()
 
         self.CNC_LIST = [ip.strip("\r\n") for ip in ips]
